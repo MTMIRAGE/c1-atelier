@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Attelage C1 v69</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+[hidden]{display:none!important}body{margin:0}img{max-width:100%}
+/* Feuille d'atelier : cartouche en tête, vues en grille, nomenclature en tableaux */
+:root{
+  --bg:#f6f7f6; --paper:#ffffff; --ink:#1d2321; --muted:#5d6763; --line:#d5dbd8;
+  --accent:#2f6b5a; --tag:#e7efec; --img:#ffffff;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141917; --paper:#1c2220; --ink:#e6ebe9; --muted:#9aa5a1; --line:#33403b;
+  --accent:#7fc4ad; --tag:#25302c; --img:#ffffff; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141917; --paper:#1c2220; --ink:#e6ebe9; --muted:#9aa5a1; --line:#33403b;
+  --accent:#7fc4ad; --tag:#25302c; --img:#ffffff; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+header.cartouche{background:var(--paper);border:1px solid var(--line);display:grid;grid-template-columns:2fr 1fr 1fr 1fr}
+.cartouche>div{padding:12px 16px;border-right:1px solid var(--line);min-width:0}
+.cartouche>div:last-child{border-right:0}
+.cartouche .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.cartouche h1{margin:2px 0 0;font-size:24px;font-weight:600;text-wrap:balance}
+.cartouche .val{font-family:var(--mono);font-size:14px;margin-top:2px}
+@media (max-width:760px){header.cartouche{grid-template-columns:1fr 1fr}.cartouche>div{border-bottom:1px solid var(--line)}.cartouche>div:first-child{grid-column:1/-1}}
+h2{font-size:18px;font-weight:600;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 14px;max-width:68ch}
+.hero{background:var(--img);border:1px solid var(--line);display:block;width:100%;cursor:zoom-in}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+figure{margin:0;background:var(--paper);border:1px solid var(--line);display:flex;flex-direction:column}
+figure img{background:var(--img);display:block;width:100%;aspect-ratio:10/7;object-fit:contain;cursor:zoom-in;border-bottom:1px solid var(--line)}
+figcaption{padding:8px 12px;font-size:13px;display:flex;justify-content:space-between;gap:8px}
+figcaption span:last-child{font-family:var(--mono);color:var(--muted)}
+.tbl{overflow-x:auto;background:var(--paper);border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:640px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--tag)}
+tr:last-child td{border-bottom:0}
+td.q{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;width:56px}
+td.d{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 7px;border-radius:3px;background:var(--tag);color:var(--accent);white-space:nowrap}
+.notes{background:var(--paper);border:1px solid var(--line);padding:14px 18px}
+.notes ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+footer{color:var(--muted);font-size:13px}
+#lb{position:fixed;inset:0;background:rgba(10,14,12,.88);display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));z-index:20;cursor:zoom-out}
+#lb img{max-width:100%;max-height:100%;background:#fff}
+a{color:var(--accent)}
+@media print{@page{size:A4;margin:12mm}body{background:#fff;padding:0;font-size:11pt}
+  section{break-inside:avoid-page}.tbl,section:has(table){break-inside:auto}tr{break-inside:avoid}
+  .grid{grid-template-columns:1fr 1fr}figure img{aspect-ratio:auto}table{min-width:0}.sub:has(+.grid) {}
+  #lb{display:none!important}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="cartouche">
+  <div><div class="lbl">Pièce</div><h1>Attelage C1 + barre de blocage</h1></div>
+  <div><div class="lbl">Version C1</div><div class="val">v69</div></div>
+  <div><div class="lbl">Barre de blocage</div><div class="val">v24</div></div>
+  <div><div class="lbl">Cotes</div><div class="val">mm</div></div>
+</header>
+
+<section>
+  <h2>Montage sur les deux vélos</h2>
+  <p class="sub">Le vélo tracteur à l'avant, le Lime derrière. La roue avant du Lime est soulevée et posée dans le berceau (les deux joues). La barre de blocage relie la selle et le guidon du Lime pour garder sa direction droite.</p>
+  <img class="hero" src="v/00_ensemble.jpg" alt="Vue axonométrique de l'ensemble : vélo tracteur, attelage C1 et Lime">
+</section>
+
+<section>
+  <h2>Attelage C1 : vues axonométriques</h2>
+  <p class="sub">Touchez une vue pour l'agrandir.</p>
+  <div class="grid">
+    <figure><img src="v/01_C1_axono_avant_droite.jpg" alt="C1 axonométrie avant droite" loading="lazy"><figcaption><span>Axonométrie avant droite</span><span>01</span></figcaption></figure>
+    <figure><img src="v/03_C1_axono_arriere_droite.jpg" alt="C1 axonométrie arrière droite" loading="lazy"><figcaption><span>Axonométrie arrière droite</span><span>02</span></figcaption></figure>
+    <figure><img src="v/02_C1_axono_arriere_gauche.jpg" alt="C1 axonométrie arrière gauche" loading="lazy"><figcaption><span>Axonométrie arrière gauche</span><span>03</span></figcaption></figure>
+    <figure><img src="v/04_C1_axono_dessous.jpg" alt="C1 axonométrie par dessous" loading="lazy"><figcaption><span>Axonométrie par dessous</span><span>04</span></figcaption></figure>
+    <figure><img src="v/05_C1_cote.jpg" alt="C1 vue de côté" loading="lazy"><figcaption><span>Vue de côté</span><span>05</span></figcaption></figure>
+    <figure><img src="v/06_C1_dessus.jpg" alt="C1 vue de dessus" loading="lazy"><figcaption><span>Vue de dessus</span><span>06</span></figcaption></figure>
+    <figure><img src="v/07_C1_face_arriere.jpg" alt="C1 vue de face arrière" loading="lazy"><figcaption><span>Vue de face (arrière)</span><span>07</span></figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <h2>Attelage C1 : axonométries éclatées</h2>
+  <p class="sub">Chaque sous-ensemble est écarté de sa place de montage pour montrer comment les pièces s'emboîtent. Les tiges filetées restent avec leurs écrous.</p>
+  <img class="hero" src="v/10_C1_eclate_avant_droite.jpg" alt="C1 axonométrie éclatée, avant droite">
+  <div class="grid" style="margin-top:12px">
+    <figure><img src="v/11_C1_eclate_arriere_droite.jpg" alt="C1 axonométrie éclatée, arrière droite" loading="lazy"><figcaption><span>Éclaté, arrière droite</span><span>11</span></figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <h2>Barre de blocage universelle selle-guidon</h2>
+  <p class="sub">Télescopique de 500 à 900 mm, mâchoires en V sur la tige de selle (Ø25 à 35) et sur la poignée (Ø22 à 40).</p>
+  <div class="grid">
+    <figure><img src="v/08_barre_axono.jpg" alt="Barre de blocage axonométrie" loading="lazy"><figcaption><span>Axonométrie</span><span>08</span></figcaption></figure>
+    <figure><img src="v/09_barre_axono_2.jpg" alt="Barre de blocage axonométrie côté opposé" loading="lazy"><figcaption><span>Axonométrie, côté opposé</span><span>09</span></figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <h2>Pièces à fabriquer</h2>
+  <p class="sub">Découpe laser (tôle et tube), plis et soudures. Les cotes sont l'encombrement de chaque pièce.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Pièce</th><th>Matière</th><th>Encombrement</th><th>Procédé</th><th>Qté</th></tr></thead>
+    <tbody>
+      <tr><td>Platine porte-bagages (PB)</td><td>Tôle acier 8 mm</td><td class="d">240 × 230</td><td><span class="pill">laser tôle</span></td><td class="q">1</td></tr>
+      <tr><td>Tube de lacet + fourreau 28×2,5 L60 soudé</td><td>Tube acier 50×50×3</td><td class="d">L 238</td><td><span class="pill">laser tube</span> <span class="pill">soudure</span></td><td class="q">1</td></tr>
+      <tr><td>Coude de tangage : barre droite encochée V80, pliée et soudée ; fourreau 28×2,5 L40 et tige M16 L200 soudés</td><td>Tube acier 40×40×2</td><td class="d">barre droite 295,7</td><td><span class="pill">laser tube</span> <span class="pill">pli</span> <span class="pill">soudure</span></td><td class="q">1</td></tr>
+      <tr><td>Patins du coude, collés</td><td>POM 3 mm</td><td class="d">47 × 31 / 44 × 24</td><td><span class="pill">découpe</span></td><td class="q">4</td></tr>
+      <tr><td>Tube de réglage</td><td>Alu 6060 T66 30×30×3</td><td class="d">L 340</td><td><span class="pill">laser tube</span></td><td class="q">1</td></tr>
+      <tr><td>Joues du berceau de roue (gauche + droite)</td><td>Alu 5083 H111 4 mm</td><td class="d">669 × 351</td><td><span class="pill">laser tôle</span></td><td class="q">2</td></tr>
+      <tr><td>Mâchoires fixes coulissantes (G + D)</td><td>Alu 5754 H111 10 mm</td><td class="d">215 × 59</td><td><span class="pill">laser tôle</span></td><td class="q">2</td></tr>
+      <tr><td>Coulisseaux des mâchoires</td><td>Alu 6060 T66 50×40×3</td><td class="d">L 80</td><td><span class="pill">laser tube</span></td><td class="q">2</td></tr>
+      <tr><td>Patins des coulisseaux, collés</td><td>POM 2 mm</td><td class="d">80 × 34 / 80 × 40</td><td><span class="pill">découpe</span></td><td class="q">8</td></tr>
+      <tr><td>Bras de fourche</td><td>Alu 6060 T66 40×30×3</td><td class="d">L 487</td><td><span class="pill">laser tube</span></td><td class="q">2</td></tr>
+      <tr><td>Fourreaux de pivot des bras</td><td>Alu rond 22×2</td><td class="d">L 30</td><td><span class="pill">coupe</span></td><td class="q">2</td></tr>
+      <tr><td colspan="5" style="background:var(--tag);font-weight:600">Barre de blocage v24</td></tr>
+      <tr><td>Tube B, côté selle</td><td>Alu 6060 T66 40×30×3</td><td class="d">L 380</td><td><span class="pill">laser tube</span></td><td class="q">1</td></tr>
+      <tr><td>Tube C, côté poignée (chape découpée dans le tube)</td><td>Alu 6060 T66 30×20×3</td><td class="d">L 375</td><td><span class="pill">laser tube</span></td><td class="q">1</td></tr>
+      <tr><td>Patins du télescope, collés</td><td>POM 2 mm</td><td class="d">60 × 30 / 60 × 24</td><td><span class="pill">découpe</span></td><td class="q">4</td></tr>
+      <tr><td>Mâchoires fixes du bas (selle + poignée)</td><td>Alu 5754 H111 10 mm</td><td class="d">138 × 90</td><td><span class="pill">laser tôle</span></td><td class="q">2</td></tr>
+      <tr><td>Mâchoires fixes du haut (selle + poignée)</td><td>Alu 5754 H111 10 mm</td><td class="d">138 × 90</td><td><span class="pill">laser tôle</span></td><td class="q">2</td></tr>
+      <tr><td>Mâchoires mobiles (selle + poignée)</td><td>Alu 5754 H111 10 mm</td><td class="d">85 × 54</td><td><span class="pill">laser tôle</span></td><td class="q">2</td></tr>
+      <tr><td>Garnitures des V, collées</td><td>Caoutchouc 3 mm</td><td class="d">54 × 27</td><td><span class="pill">découpe</span></td><td class="q">6</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Pièces du commerce</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Pièce</th><th>Référence</th><th>Qté</th></tr></thead>
+    <tbody>
+      <tr><td>Bagues lisses (lacet + tangage)</td><td>igus GFM-2023-21</td><td class="q">4</td></tr>
+      <tr><td>Bagues lisses (pivots des bras)</td><td>igus GFM-1618-12</td><td class="q">4</td></tr>
+      <tr><td>Axe de tangage + rondelle + goupille</td><td>ISO 2341 B 20×65, ISO 8738 Ø20, ISO 1234 4×36</td><td class="q">1</td></tr>
+      <tr><td>Boulon de lacet</td><td>M20</td><td class="q">1</td></tr>
+      <tr><td>Manettes indexables M10</td><td>Kipp K0269.310</td><td class="q">7</td></tr>
+      <tr><td>Manette indexable M16 (serrage des bras)</td><td>Kipp K0269.516</td><td class="q">1</td></tr>
+      <tr><td>Broche à billes de réglage</td><td>Ø10, tige L55</td><td class="q">1</td></tr>
+      <tr><td>Écrous de réglage</td><td>M16 ISO 4032</td><td class="q">2</td></tr>
+      <tr><td>Tiges filetées du berceau + 2 écrous et 4 rondelles par côté</td><td>M16 DIN 976 L130</td><td class="q">3</td></tr>
+      <tr><td>Tiges filetées d'appui de roue + écrous et contre-écrous</td><td>M10 DIN 976 L115</td><td class="q">4</td></tr>
+      <tr><td>Embouts à rotule femelles</td><td>SI10E M10</td><td class="q">2</td></tr>
+      <tr><td>Embouts à rotule mâles + contre-écrou</td><td>SA10T/K M10</td><td class="q">2</td></tr>
+      <tr><td>Vis à tête bombée collet carré</td><td>DIN 603 M10 (L35 ×2, L45 ×3, L55 ×2)</td><td class="q">7</td></tr>
+      <tr><td>Vis CHC + écrous frein (chapes, tôles fixes)</td><td>ISO 4762 M10×40/45, M6×40 ; ISO 7040</td><td class="q">—</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="notes">
+  <h2>À savoir pour la fabrication</h2>
+  <ul>
+    <li>Les fichiers de découpe (STEP) sont dans l'export 247 du 27/10/2026 : 13 fichiers, 22 pièces.</li>
+    <li>Coude : barre droite encochée en V, pliée à 80°, cordon de soudure sur la face intérieure.</li>
+    <li>Les fourreaux 28×2,5 (L60 et L40) sont du tube hydraulique de précision E235+N, achetés coupés, puis soudés.</li>
+    <li>Les patins POM et les garnitures caoutchouc sont collés après la soudure et la finition.</li>
+  </ul>
+</section>
+
+<footer>Modèle Fusion 360 « PIECE_REMORQUAGE C1 GEOMETRIQUE » v69, avec « BARRE BLOCAGE UNIVERSELLE selle-guidon » v24. Vues du 24/11/2026.</footer>
+</div>
+
+<div id="lb" hidden><img alt=""></div>
+<script>
+const lb=document.getElementById('lb'),li=lb.querySelector('img');
+document.querySelectorAll('figure img,.hero').forEach(i=>{i.tabIndex=0;const o=()=>{li.src=i.src;li.alt=i.alt;lb.hidden=false};i.addEventListener('click',o);i.addEventListener('keydown',e=>{if(e.key==='Enter')o()})});
+lb.addEventListener('click',()=>lb.hidden=true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.hidden=true});
+</script>
+</body>
+</html>
