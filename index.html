@@ -54,6 +54,18 @@ td.d{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowra
 footer{color:var(--muted);font-size:13px}
 #lb{position:fixed;inset:0;background:rgba(10,14,12,.88);display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));z-index:20;cursor:zoom-out}
 #lb img{max-width:100%;max-height:100%;background:#fff}
+.v3d{background:var(--paper);border:1px solid var(--line)}
+.v3d-bar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line)}
+.seg{display:flex;border:1px solid var(--line)}
+.v3d button{font:500 13px var(--sans);padding:6px 12px;border:0;background:transparent;color:var(--ink);cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.v3d button[aria-pressed="true"]{background:var(--accent);color:var(--paper)}
+#b-rot{border:1px solid var(--line)}
+.sl{display:flex;align-items:center;gap:8px;font-size:13px;flex:1 1 200px}
+.sl input{flex:1;accent-color:var(--accent)}
+#cv{position:relative;height:min(70vh,620px);background:#fff;touch-action:none}
+#cv canvas{display:block;width:100%;height:100%}
+#cv-msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;margin:0;color:#5d6763}
 a{color:var(--accent)}
 @media print{@page{size:A4;margin:12mm}body{background:#fff;padding:0;font-size:11pt}
   section{break-inside:avoid-page}.tbl,section:has(table){break-inside:auto}tr{break-inside:avoid}
@@ -76,6 +88,22 @@ a{color:var(--accent)}
   <h2>Montage sur les deux vélos</h2>
   <p class="sub">Le vélo tracteur à l'avant, le Lime derrière. La roue avant du Lime est soulevée et posée dans le berceau (les deux joues). La barre de blocage relie la selle et le guidon du Lime pour garder sa direction droite.</p>
   <img class="hero" src="v/00_ensemble.jpg" alt="Vue axonométrique de l'ensemble : vélo tracteur, attelage C1 et Lime">
+</section>
+
+<section id="vue3d">
+  <h2>Vue 3D</h2>
+  <p class="sub">La pièce tourne toute seule. Faites-la tourner au doigt ou à la souris, zoomez avec deux doigts ou la molette. Le curseur écarte les pièces.</p>
+  <div class="v3d">
+    <div class="v3d-bar">
+      <div class="seg" role="group" aria-label="Pièce affichée">
+        <button type="button" id="b-c1" aria-pressed="true">Attelage C1</button>
+        <button type="button" id="b-barre" aria-pressed="false">Barre de blocage</button>
+      </div>
+      <label class="sl" for="ecl">Éclaté <input id="ecl" type="range" min="0" max="100" value="0"></label>
+      <button type="button" id="b-rot" aria-pressed="true">Rotation auto</button>
+    </div>
+    <div id="cv"><p id="cv-msg">Chargement de la 3D…</p></div>
+  </div>
 </section>
 
 <section>
@@ -181,6 +209,64 @@ const lb=document.getElementById('lb'),li=lb.querySelector('img');
 document.querySelectorAll('figure img,.hero').forEach(i=>{i.tabIndex=0;const o=()=>{li.src=i.src;li.alt=i.alt;lb.hidden=false};i.addEventListener('click',o);i.addEventListener('keydown',e=>{if(e.key==='Enter')o()})});
 lb.addEventListener('click',()=>lb.hidden=true);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.hidden=true});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(async function(){
+  const box=document.getElementById('cv'),msg=document.getElementById('cv-msg');
+  if(!window.THREE){msg.textContent="La 3D n'a pas pu se charger.";return}
+  const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.setClearColor(0xffffff);
+  box.appendChild(R.domElement);
+  const S=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(30,1,1,50000);cam.up.set(0,0,1);
+  S.add(new THREE.HemisphereLight(0xffffff,0x8a8f8c,0.85));
+  const d1=new THREE.DirectionalLight(0xffffff,0.55);d1.position.set(-1,-1.4,2);S.add(d1);
+  const d2=new THREE.DirectionalLight(0xffffff,0.25);d2.position.set(1.5,1,0.5);S.add(d2);
+  const ctl=new THREE.OrbitControls(cam,R.domElement);ctl.enableDamping=true;ctl.autoRotate=true;ctl.autoRotateSpeed=1.6;
+  function col(m){m=m.toLowerCase();
+    if(m.includes('alu'))return 0xc4c9cc; if(m.includes('nylon'))return 0xd9cfae;
+    if(m.includes('acétal')||m.includes('caoutchouc'))return 0x2b2d2e; return 0x6b7072}
+  let idx,buf;
+  try{[idx,buf]=await Promise.all([fetch('3d/c1.json').then(r=>r.json()),fetch('3d/c1.bin').then(r=>r.arrayBuffer())])}
+  catch(e){msg.textContent="Le fichier 3D n'a pas pu se charger.";return}
+  const sets={c1:new THREE.Group(),barre:new THREE.Group()};S.add(sets.c1,sets.barre);
+  const groups={};
+  for(const b of idx){
+    const pos=new Float32Array(buf,b.o,b.v*3),ind=new Uint32Array(buf,b.o+b.v*12,b.i);
+    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setIndex(new THREE.BufferAttribute(ind,1));g.computeVertexNormals();
+    const mesh=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:col(b.m),metalness:0.15,roughness:0.6,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1}));
+    const e=new THREE.LineSegments(new THREE.EdgesGeometry(g,35),new THREE.LineBasicMaterial({color:0x1d2321,transparent:true,opacity:0.55}));
+    const key=b.g.startsWith('BARRE')?'barre':'c1';
+    if(!groups[b.g]){groups[b.g]={o:new THREE.Group(),set:key};sets[key].add(groups[b.g].o)}
+    groups[b.g].o.add(mesh,e);
+  }
+  for(const k in sets){
+    const bb=new THREE.Box3().setFromObject(sets[k]),c=bb.getCenter(new THREE.Vector3());
+    sets[k].userData={c,r:bb.getSize(new THREE.Vector3()).length()/2};
+    for(const n in groups){const G=groups[n];if(G.set!==k)continue;
+      const gc=new THREE.Box3().setFromObject(G.o).getCenter(new THREE.Vector3());
+      G.dir=gc.sub(c).multiply(k==="c1"?new THREE.Vector3(0.6,1.5,0.8):new THREE.Vector3(0.22,0.22,0.22))}
+  }
+  msg.remove();
+  let cur='c1';const ecl=document.getElementById('ecl');
+  function fit(dirv){const sp=new THREE.Box3().setFromObject(sets[cur]).getBoundingSphere(new THREE.Sphere());
+    const v=THREE.MathUtils.degToRad(cam.fov)/2,h=Math.atan(Math.tan(v)*cam.aspect),a=Math.min(v,h);
+    const dist=sp.radius/Math.sin(a)*1.05;const d=dirv||cam.position.clone().sub(ctl.target).normalize();
+    ctl.target.copy(sp.center);cam.position.copy(sp.center).addScaledVector(d,dist);cam.near=dist/100;cam.far=dist*20;cam.updateProjectionMatrix()}
+  function show(k){cur=k;for(const s in sets)sets[s].visible=s===k;explode();
+    fit(new THREE.Vector3(-1,-1.25,0.9).normalize());
+    document.getElementById('b-c1').setAttribute('aria-pressed',k==='c1');document.getElementById('b-barre').setAttribute('aria-pressed',k==='barre')}
+  function explode(){const t=+ecl.value/100;for(const n in groups){const G=groups[n];G.o.position.copy(G.dir).multiplyScalar(t)}}
+  ecl.addEventListener("input",()=>{explode();fit()});
+  document.getElementById('b-c1').onclick=()=>show('c1');
+  document.getElementById('b-barre').onclick=()=>show('barre');
+  const br=document.getElementById('b-rot');br.onclick=()=>{ctl.autoRotate=!ctl.autoRotate;br.setAttribute('aria-pressed',ctl.autoRotate)};
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ctl.autoRotate=false;br.setAttribute('aria-pressed','false')}
+  function size(){const w=box.clientWidth,h=box.clientHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
+  new ResizeObserver(()=>{size();fit()}).observe(box);size();show('c1');
+  (function loop(){requestAnimationFrame(loop);ctl.update();R.render(S,cam)})();
+})();
 </script>
 </body>
 </html>
